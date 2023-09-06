@@ -9,11 +9,18 @@ def main():
     if not session_state.get("show_login_form"):
         session_state.show_login_form = False
 
-    # Center-align the button
+    # Center-align the button using CSS
     st.write("<style>div.row-widget.stButton > div{display:flex; justify-content:center;}</style>", unsafe_allow_html=True)
 
-    # Make the "Login" button bigger
-    st.button("Login", key="login_button", help="Click to login", style="width: 150%; margin-top: 50px;")
+    # Increase the button's size
+    st.write("<style>div.row-widget.stButton > button{width: auto; padding: 10px 30px;}</style>", unsafe_allow_html=True)
+
+    # Margin for the button
+    st.write("<style>div.row-widget.stButton > button{margin-top: 50px;}</style>", unsafe_allow_html=True)
+
+    # "Login" button
+    if st.button("Login", key="login_button", help="Click to login"):
+        session_state.show_login_form = True
 
     if session_state.show_login_form:
         show_login_form()
