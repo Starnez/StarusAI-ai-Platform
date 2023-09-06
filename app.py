@@ -14,77 +14,133 @@ def main():
         unsafe_allow_html=True
     )
 
-    st.title("Starus AI Content Creation Platform")
-
-    # Create a session state to store the form visibility and login status
+    # Create a session state to store the current page and login status
     session_state = st.session_state
 
     # Initialize the session state attributes if they don't exist
-    if not hasattr(session_state, "show_login_form"):
-        session_state.show_login_form = False
+    if not hasattr(session_state, "current_page"):
+        session_state.current_page = "homepage"
 
     if not hasattr(session_state, "is_logged_in"):
         session_state.is_logged_in = False
 
-    # Load CSS styles
-    load_styles()
+    if session_state.is_logged_in:
+        create_sidebar(session_state)
 
-    # "Login" button
-    if not session_state.is_logged_in and st.button("Login", key="login_button", help="Click to login"):
-        session_state.show_login_form = True
-
-    if session_state.show_login_form:
+    if session_state.current_page == "homepage":
+        show_homepage(session_state)
+    elif session_state.current_page == "login":
         show_login_form(session_state)
-    elif session_state.is_logged_in:
-        show_dashboard()
+    elif session_state.current_page == "dashboard":
+        show_dashboard(session_state)
+    elif session_state.current_page == "content_generation":
+        show_content_generation()
+    elif session_state.current_page == "saved":
+        show_saved()
 
-def load_styles():
-    # Center-align the button using CSS
-    st.write("<style>div.row-widget.stButton > div{display:flex; justify-content:center;}</style>",
-             unsafe_allow_html=True)
+def create_sidebar(session_state):
+    # Sidebar for Dashboard
 
-    # Increase the button's size
-    st.write("<style>div.row-widget.stButton > button{width: auto; padding: 10px 30px;}</style>",
-             unsafe_allow_html=True)
+    # Profile picture, name, and company name at the top of the sidebar
+    st.sidebar.markdown(
+        """
+        <style>
+        /* Make the profile picture circular */
+        .circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-top: -35%;  /* Adjusted the y-axis */
+            float: left;
+            margin-right: 10px;
+        }
+        .circle img {
+            width: 100%;
+            height: 100%;
+        }
+        /* Style for name and company */
+        .profile-info {
+            font-size: 50%;
+            float: left;
+        }
+        .name {
+            clear: left;
+        }
+        /* Thin line separator */
+        .separator {
+            border-top: 1px solid gray;
+            margin: 10px 0;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Margin for the button
-    st.write("<style>div.row-widget.stButton > button{margin-top: 50px;}</style>", unsafe_allow_html=True)
+    # Placeholder for profile picture
+    st.sidebar.markdown(
+        '<div class="circle"><img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"></div>',
+        unsafe_allow_html=True
+    )
 
-def show_login_form(session_state):
-    st.subheader("Login to your account")
+    # Name and company name to the right of the picture
+    st.sidebar.markdown('<div class="profile-info name">John Doe</div>', unsafe_allow_html=True)
+    st.sidebar.markdown('<div class="profile-info">Company, Inc.</div>', unsafe_allow_html=True)
 
+    # Thin line separator
+    st.sidebar.markdown('<div class="separator"></div>', unsafe_allow_html=True)
+
+    # Display the name of the current page
+    st.sidebar.header(session_state.current_page.capitalize())
+
+    if st.sidebar.button("Dashboard"):
+        session_state.current_page = "dashboard"
+
+    if st.sidebar.button("Content Generation"):
+        session_state.current_page = "content_generation"
+
+    if st.sidebar.button("Saved"):
+        session_state.current_page = "saved"
+
+def show_homepage(session_state):
+    st.title("Welcome to Starus Content Generator")
+    st.subheader("Your Content Creation Platform")
+
+    if st.button("Login"):
+        session_state.current_page = "login"
+
+def login_pressed():
+    # Here, you'll integrate with Planetscale for authentication
+    # For now, let's just check if the fields are filled
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
-    if st.button("Submit"):
-        # Here, you'll integrate with Planetscale for authentication
-        # For now, let's just check if the fields are filled
-        if username and password:
-            session_state.is_logged_in = True
-            st.success("Logged in successfully!")
-        else:
-            st.warning("Please enter your username and password.")
+    if username and password:
+        return True
+    else:
+        st.warning("Please enter your username and password.")
+        return False
 
-def show_dashboard():
-    st.subheader("Dashboard")
+def show_login_form(session_state):
+    st.title("Login to Your Account")
 
-    # Sidebar for Dashboard
-    st.sidebar.title("Dashboard")
+    if session_state.current_page == "login":
+        with st.form("login_form"):
+            if login_pressed():
+                session_state.is_logged_in = True
+                session_state.current_page = "dashboard"
+            st.form_submit_button("Submit")
 
-    # Placeholder for profile picture
-    st.sidebar.image("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png", width=100)
-
-    # Placeholder for name and company
-    st.sidebar.write("John Doe")
-    st.sidebar.write("Company, Inc.")
-
-    # Dashboard menu
-    st.sidebar.write("Dashboard")
-    # Add other menu items here
-
+def show_dashboard(session_state):
     # Main content
     st.write("Welcome to the Dashboard!")
     # Add content for the Dashboard page here
+
+def show_content_generation():
+    st.write("Content Generation - Coming Soon")
+
+def show_saved():
+    st.write("Saved - Coming Soon")
 
 if __name__ == "__main__":
     main()
