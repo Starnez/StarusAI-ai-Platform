@@ -63,11 +63,12 @@ def create_sidebar(session_state):
         .profile-info {
             font-size: 50%;
             margin-left: 30%;
+            margin-top: -42%;
             float: left;
         }
         .name {
             clear: left;
-            margin-top: -27%;
+            margin-top: -35%;
             font-size: 100%
         }
         /* Thin line separator */
