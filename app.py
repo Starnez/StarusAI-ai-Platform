@@ -1,4 +1,44 @@
 import streamlit as st
+import streamlit as st
+import planetscale
+import bcrypt
+import mysql.connector
+import bcrypt
+
+
+def show_login_form(session_state):
+    st.title("Login to Your Account")
+
+    with st.form("login_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        submit_button = st.form_submit_button("Submit")
+
+        if submit_button:
+            if authenticate_user(username, password):
+                session_state.is_logged_in = True
+                session_state.current_page = "dashboard"
+                st.success("Logged in successfully!")
+            else:
+                st.warning("Invalid username or password.")
+
+
+def show_registration_form():
+    st.title("Register a New Account")
+
+    with st.form("registration_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        confirm_password = st.text_input("Confirm Password", type="password")
+        register_button = st.form_submit_button("Register")
+
+        if register_button:
+            if password == confirm_password:
+                register_user(username, password)
+                st.success("Account created successfully!")
+            else:
+                st.warning("Passwords do not match.")
+
 
 def main():
     # Add background image using HTML and CSS
@@ -114,8 +154,34 @@ def show_homepage(session_state):
         session_state.current_page = "login"
 
 def login_pressed():
-    # Here, you'll integrate with Planetscale for authentication
-    # For now, let's just check if the fields are filled
+    conn = planetscale.connect('your_database_name', 'your_branch_name', 'your_connection_string')
+
+    def check_user_credentials(username, password):
+        # Query the Planetscale database for the user's hashed password
+        with conn.cursor() as cur:
+            cur.execute("SELECT password FROM users WHERE username = %s", (username,))
+            result = cur.fetchone()
+            if result:
+                hashed_password = result[0]
+                # Check if the entered password matches the hashed password in the database
+                if bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
+                    return True
+        return False
+
+    def login_pressed():
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if username and password:
+            if check_user_credentials(username, password):
+                return True
+            else:
+                st.warning("Invalid username or password.")
+                return False
+        else:
+            st.warning("Please enter your username and password.")
+            return False
+
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
