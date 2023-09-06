@@ -20,7 +20,8 @@ def main():
         """
         <style>
         .stApp {
-            background-image: url("C:/Users/Stokley/StarusAI-ai-Platform/Background.png");
+            background-image: url("C:\\Users\\Stokley\\StarusAI-ai-Platform\\Background.png"
+);
             background-size: cover;
         }
         </style>
