@@ -6,8 +6,8 @@ def main():
 
     # Display background image
     st.image(
-        st.image(r"C:\Users\Stokley\PycharmProjects\Images\starnez_Sleek_modern_techy_background_picture_for_an_AI_content_ecbfe811-3a1b-478a-bc0d-90a32b7ad4a9.png", use_column_width=True)
-
+        "C:\\Users\\Stokley\\PycharmProjects\\Images\\starnez_Sleek_modern_techy_background_picture_for_an_AI_content_ecbfe811-3a1b-478a-bc0d-90a32b7ad4a9.png",
+        use_column_width=True)
 
     # Login button
     if st.button("Login"):
