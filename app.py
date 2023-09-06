@@ -209,6 +209,6 @@ if __name__ == "__main__":
 
         # Register the user after confirming the connection
         register_user("testuser", "testpassword")
-        st.write("User registered successfully!")
+        st.write("User registered SO successfully!")
     except Exception as e:
         st.write(f"Error: {e}")
