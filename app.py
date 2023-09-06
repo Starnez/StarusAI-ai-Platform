@@ -16,6 +16,18 @@ def main():
     if session_state.show_login_form:
         show_login_form()
 
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background-image: url("C:\\Users\\Stokley\\StarusAI-ai-Platform\\Background.png");
+            background-size: cover;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 def show_login_form():
     st.subheader("Login to your account")
 
