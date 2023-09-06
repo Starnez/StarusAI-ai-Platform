@@ -6,7 +6,7 @@ def main():
         """
         <style>
         body {
-            background-image: url('https://raw.githubusercontent.com/Starnez/StarusAI-ai-Platform/main/Background.png');
+            background-image: url('your_image_url_here');
             background-size: cover;
         }
         </style>
@@ -34,7 +34,7 @@ def main():
         session_state.show_login_form = True
 
     if session_state.show_login_form:
-        show_login_form()
+        show_login_form(session_state)
     elif session_state.is_logged_in:
         show_dashboard()
 
@@ -50,7 +50,7 @@ def load_styles():
     # Margin for the button
     st.write("<style>div.row-widget.stButton > button{margin-top: 50px;}</style>", unsafe_allow_html=True)
 
-def show_login_form():
+def show_login_form(session_state):
     st.subheader("Login to your account")
 
     username = st.text_input("Username")
