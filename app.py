@@ -51,7 +51,7 @@ def create_sidebar(session_state):
             height: 50px;
             border-radius: 50%;
             overflow: hidden;
-            margin-top: -10%;  /* Adjusted the y-axis */
+            margin-top: -55%;  /* Adjusted the y-axis */
             float: left;
             margin-right: 10px;
         }
