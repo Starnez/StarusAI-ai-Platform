@@ -68,7 +68,7 @@ def create_sidebar(session_state):
         }
         .name {
             clear: left;
-            margin-top: 0%;
+            margin-top: -22%;
             font-size: 150%;
         }
         /* Thin line separator */
