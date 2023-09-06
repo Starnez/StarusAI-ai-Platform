@@ -53,7 +53,7 @@ def show_dashboard():
     st.sidebar.title("Dashboard")
 
     # Placeholder for profile picture
-    st.sidebar.image("placeholder_image.png", width=100)
+    st.sidebar.image("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png", width=100)
 
     # Placeholder for name and company
     st.sidebar.write("John Doe")
