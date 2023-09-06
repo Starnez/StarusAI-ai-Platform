@@ -1,11 +1,14 @@
 import streamlit as st
 
-
 def main():
     st.title("Starus AI Content Creation Platform")
 
     # Create a session state to store the form visibility
     session_state = st.session_state
+
+    # Initialize the session state attribute if it doesn't exist
+    if not hasattr(session_state, "show_login_form"):
+        session_state.show_login_form = False
 
     # Load CSS styles
     load_styles()
