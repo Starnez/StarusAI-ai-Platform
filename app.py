@@ -9,9 +9,11 @@ def main():
     if not session_state.get("show_login_form"):
         session_state.show_login_form = False
 
-    # Login button
-    if st.button("Login"):
-        session_state.show_login_form = True
+    # Center-align the button
+    st.write("<style>div.row-widget.stButton > div{display:flex; justify-content:center;}</style>", unsafe_allow_html=True)
+
+    # Make the "Login" button bigger
+    st.button("Login", key="login_button", help="Click to login", style="width: 150%; margin-top: 50px;")
 
     if session_state.show_login_form:
         show_login_form()
@@ -20,8 +22,7 @@ def main():
         """
         <style>
         .stApp {
-            background-image: url("https://raw.githubusercontent.com/Starnez/StarusAI-ai-Platform/main/Background.png"
-);
+            background-image: url("https://raw.githubusercontent.com/Starnez/StarusAI-ai-Platform/main/Background.png");
             background-size: cover;
         }
         </style>
