@@ -62,14 +62,14 @@ def create_sidebar(session_state):
         /* Style for name and company */
         .profile-info {
             font-size: 50%;
-            margin-left: 30%;
-            margin-top: -42%;
+            margin-left: 16%;
+            margin-top: -32%;
             float: left;
         }
         .name {
             clear: left;
-            margin-top: -35%;
-            font-size: 100%
+            margin-top: -30%;
+            font-size: 100%;
         }
         /* Thin line separator */
         .separator {
