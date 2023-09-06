@@ -51,7 +51,7 @@ def create_sidebar(session_state):
             height: 50px;
             border-radius: 50%;
             overflow: hidden;
-            margin-top: -35%;  /* Adjusted the y-axis */
+            margin-top: 2%;  /* Adjusted the y-axis */
             float: left;
             margin-right: 10px;
         }
@@ -62,6 +62,7 @@ def create_sidebar(session_state):
         /* Style for name and company */
         .profile-info {
             font-size: 50%;
+            margin-top: 25%
             float: left;
         }
         .name {
