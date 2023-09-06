@@ -1,14 +1,20 @@
 import streamlit as st
 
-
 def main():
     st.title("Starus AI Content Creation Platform")
 
+    # Create a session state to store the form visibility
+    session_state = st.session_state
+
+    if not session_state.get("show_login_form"):
+        session_state.show_login_form = False
 
     # Login button
     if st.button("Login"):
-        show_login_form()
+        session_state.show_login_form = True
 
+    if session_state.show_login_form:
+        show_login_form()
 
 def show_login_form():
     st.subheader("Login to your account")
@@ -23,7 +29,6 @@ def show_login_form():
             st.success("Logged in successfully!")
         else:
             st.warning("Please enter your username and password.")
-
 
 if __name__ == "__main__":
     main()
