@@ -1,10 +1,46 @@
 import streamlit as st
-import streamlit as st
-import planetscale
-import bcrypt
 import mysql.connector
 import bcrypt
+import os
+from dotenv import load_dotenv
 
+load_dotenv()  # This loads the environment variables from .env file
+
+# Now you can access the variables using os.getenv
+db_host = os.getenv("DB_HOST")
+db_user = os.getenv("DB_USERNAME")  # Updated to match .env file
+db_pass = os.getenv("DB_PASSWORD")
+db_name = os.getenv("DB_NAME")
+
+def create_connection():
+    connection = mysql.connector.connect(
+        host=db_host,
+        user=db_user,
+        password=db_pass,
+        database=db_name
+    )
+    return connection
+
+def register_user(username, plain_password):
+    hashed = bcrypt.hashpw(plain_password.encode('utf-8'), bcrypt.gensalt())
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
+def authenticate_user(username, plain_password):
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT password FROM users WHERE username=%s", (username,))
+    stored_hashed = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    if stored_hashed and bcrypt.checkpw(plain_password.encode('utf-8'), stored_hashed[0].encode('utf-8')):
+        return True
+    return False
 
 def show_login_form(session_state):
     st.title("Login to Your Account")
@@ -20,8 +56,9 @@ def show_login_form(session_state):
                 session_state.current_page = "dashboard"
                 st.success("Logged in successfully!")
             else:
-                st.warning("Invalid username or password.")
-
+                st.warning("Incorrect username or password. Please try again.")
+                # Refresh the page to allow the user to reenter their information
+                st.experimental_rerun()
 
 def show_registration_form():
     st.title("Register a New Account")
@@ -38,7 +75,6 @@ def show_registration_form():
                 st.success("Account created successfully!")
             else:
                 st.warning("Passwords do not match.")
-
 
 def main():
     # Add background image using HTML and CSS
@@ -153,54 +189,6 @@ def show_homepage(session_state):
     if st.button("Login"):
         session_state.current_page = "login"
 
-def login_pressed():
-    conn = planetscale.connect('your_database_name', 'your_branch_name', 'your_connection_string')
-
-    def check_user_credentials(username, password):
-        # Query the Planetscale database for the user's hashed password
-        with conn.cursor() as cur:
-            cur.execute("SELECT password FROM users WHERE username = %s", (username,))
-            result = cur.fetchone()
-            if result:
-                hashed_password = result[0]
-                # Check if the entered password matches the hashed password in the database
-                if bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
-                    return True
-        return False
-
-    def login_pressed():
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-
-        if username and password:
-            if check_user_credentials(username, password):
-                return True
-            else:
-                st.warning("Invalid username or password.")
-                return False
-        else:
-            st.warning("Please enter your username and password.")
-            return False
-
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-
-    if username and password:
-        return True
-    else:
-        st.warning("Please enter your username and password.")
-        return False
-
-def show_login_form(session_state):
-    st.title("Login to Your Account")
-
-    if session_state.current_page == "login":
-        with st.form("login_form"):
-            if login_pressed():
-                session_state.is_logged_in = True
-                session_state.current_page = "dashboard"
-            st.form_submit_button("Submit")
-
 def show_dashboard(session_state):
     # Main content
     st.write("Welcome to the Dashboard!")
@@ -212,5 +200,15 @@ def show_content_generation():
 def show_saved():
     st.write("Saved - Coming Soon")
 
+
 if __name__ == "__main__":
-    main()
+    try:
+        connection = create_connection()
+        st.write("Connected to the database successfully!")
+        connection.close()
+
+        # Register the user after confirming the connection
+        register_user("testuser", "testpassword")
+        st.write("User registered successfully!")
+    except Exception as e:
+        st.write(f"Error: {e}")
