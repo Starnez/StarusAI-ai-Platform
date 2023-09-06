@@ -4,8 +4,6 @@ import streamlit as st
 def main():
     st.title("Starus AI Content Creation Platform")
 
-    # Display background image
-    st.image("Background.png",use_column_width=True)
 
     # Login button
     if st.button("Login"):
