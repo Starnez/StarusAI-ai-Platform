@@ -200,15 +200,8 @@ def show_content_generation():
 def show_saved():
     st.write("Saved - Coming Soon")
 
-
 if __name__ == "__main__":
-    try:
-        connection = create_connection()
-        st.write("Connected to the database successfully!")
-        connection.close()
 
-        # Register the user after confirming the connection
-        register_user("testuser", "testpassword")
-        st.write("User registered SO successfully!")
-    except Exception as e:
-        st.write(f"Error: {e}")
+    register_user("testuser", "testpassword")
+
+    main()
