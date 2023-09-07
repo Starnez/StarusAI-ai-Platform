@@ -1,4 +1,0 @@
-streamlit==1.26.0-  # You can adjust this to your specific version
-mysql-connector-python==8.1.0
-bcrypt==3.2.0
-python-dotenv==0.19.2

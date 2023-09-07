@@ -1,81 +1,37 @@
-import streamlit as st
-import mysql.connector
-import bcrypt
 import os
-from dotenv import load_dotenv
+import mysql.connector
+import streamlit as st
+import bcrypt
 
-load_dotenv()  # This loads the environment variables from .env file
+# Retrieve environment variables
+DB_HOST = os.environ.get('DB_HOST')
+DB_NAME = os.environ.get('DB_NAME')
+DB_USER = os.environ.get('DB_USER')
+DB_PASS = os.environ.get('DB_PASS')
 
-# Now you can access the variables using os.getenv
-db_host = os.getenv("DB_HOST")
-db_user = os.getenv("DB_USERNAME")  # Updated to match .env file
-db_pass = os.getenv("DB_PASSWORD")
-db_name = os.getenv("DB_NAME")
-
-def create_connection():
+# Function to connect to the database
+def connect_to_db():
     connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_pass,
-        database=db_name
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS
     )
     return connection
 
-def register_user(username, plain_password):
-    hashed = bcrypt.hashpw(plain_password.encode('utf-8'), bcrypt.gensalt())
-    connection = create_connection()
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed))
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-
-def authenticate_user(username, plain_password):
-    connection = create_connection()
-    cursor = connection.cursor()
+def verify_credentials(username, password):
+    conn = connect_to_db()
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT password FROM users WHERE username=%s", (username,))
-    stored_hashed = cursor.fetchone()
+    result = cursor.fetchone()
     cursor.close()
-    connection.close()
-    if stored_hashed and bcrypt.checkpw(plain_password.encode('utf-8'), stored_hashed[0].encode('utf-8')):
-        return True
+    conn.close()
+
+    if result:
+        hashed_password = result['password'].encode('utf-8')
+        if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+            return True
     return False
-
-def show_login_form(session_state):
-    st.title("Login to Your Account")
-
-    with st.form("login_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submit_button = st.form_submit_button("Submit")
-
-        if submit_button:
-            if authenticate_user(username, password):
-                session_state.is_logged_in = True
-                session_state.current_page = "dashboard"
-                st.success("Logged in successfully!")
-            else:
-                st.warning("Incorrect username or password. Please try again.")
-                # Refresh the page to allow the user to reenter their information
-                st.experimental_rerun()
-
-def show_registration_form():
-    st.title("Register a New Account")
-
-    with st.form("registration_form"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        confirm_password = st.text_input("Confirm Password", type="password")
-        register_button = st.form_submit_button("Register")
-
-        if register_button:
-            if password == confirm_password:
-                register_user(username, password)
-                st.success("Account created successfully!")
-            else:
-                st.warning("Passwords do not match.")
-
 def main():
     # Add background image using HTML and CSS
     st.markdown(
@@ -116,7 +72,6 @@ def main():
 
 def create_sidebar(session_state):
     # Sidebar for Dashboard
-
     # Profile picture, name, and company name at the top of the sidebar
     st.sidebar.markdown(
         """
@@ -189,6 +144,36 @@ def show_homepage(session_state):
     if st.button("Login"):
         session_state.current_page = "login"
 
+def login_pressed():
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if username and password:
+        if verify_credentials(username, password):
+            return True
+        else:
+            st.warning("Invalid username or password.")
+            return False
+    else:
+        st.warning("Please enter your username and password.")
+        return False
+
+
+def show_login_form(session_state):
+    st.title("Login to Your Account")
+
+    with st.form("login_form"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if st.form_submit_button("Submit"):
+            if verify_credentials(username, password):
+                session_state.is_logged_in = True
+                session_state.current_page = "dashboard"
+            else:
+                st.warning("Incorrect username or password, please try again.")
+                st.experimental_rerun()  # Refresh the page
+
 def show_dashboard(session_state):
     # Main content
     st.write("Welcome to the Dashboard!")
@@ -201,7 +186,4 @@ def show_saved():
     st.write("Saved - Coming Soon")
 
 if __name__ == "__main__":
-
-    register_user("testuser", "testpassword")
-
     main()
