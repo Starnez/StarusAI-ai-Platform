@@ -1,4 +1,4 @@
-# StarusAI-ai-Platform
+# Coding Diary
 
 September 7 - 4:25AM
 this is my first every real github project. I kind of just jumped in yesterday an im addictewd already.
